@@ -173,14 +173,25 @@ style.textContent = `
     }
     .stacked-testimonials-sticky {
         position: sticky;
-        top: 90px; /* Shift below sticky website header */
-        height: calc(100vh - 90px);
+        top: 0px; /* Pin at the very top of the screen */
+        height: 100vh; /* Use full viewport height */
         overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: #ffffff;
         width: 100%;
+        transition: top 0.4s ease, height 0.4s ease;
+    }
+
+    /* Navigation Bar Hide Transition */
+    #header {
+        transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out !important;
+    }
+    body.header-hide #header {
+        transform: translateY(-100%) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
     .testimonials-bg-text {
         position: absolute;
@@ -346,14 +357,15 @@ style.textContent = `
     
     .spiral-philosophy-sticky {
         position: sticky;
-        top: 90px;
-        height: calc(100vh - 90px);
+        top: 0px; /* Pin at the very top of the screen */
+        height: 100vh; /* Use full viewport height */
         overflow: hidden;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         width: 100%;
+        transition: top 0.4s ease, height 0.4s ease;
     }
     
     .spiral-philosophy-sticky::before {
@@ -802,8 +814,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const sectionHeight = rect.height;
             const windowHeight = window.innerHeight;
             
-            // Calculate scroll progress (0 when section hits the 90px stick point, 1 when track ends)
-            const scrolled = 90 - rect.top;
+            // Toggle header visibility based on whether we are scrolled into the testimonials section
+            const isTestimonialsActive = (rect.top <= 0 && rect.bottom >= windowHeight);
+            const philosophySection = document.getElementById('philosophy-section');
+            let isPhilosophyActive = false;
+            if (philosophySection) {
+                const philRect = philosophySection.getBoundingClientRect();
+                isPhilosophyActive = (philRect.top <= 0 && philRect.bottom >= windowHeight);
+            }
+            
+            if (isTestimonialsActive || isPhilosophyActive) {
+                document.body.classList.add('header-hide');
+            } else {
+                document.body.classList.remove('header-hide');
+            }
+            
+            // Calculate scroll progress (0 when section hits the stick point, 1 when track ends)
+            const scrolled = -rect.top;
             const scrollRange = sectionHeight - windowHeight;
             
             if (scrollRange <= 0) return;
@@ -882,7 +909,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const sectionHeight = rect.height;
             const windowHeight = window.innerHeight;
             
-            const scrolled = 90 - rect.top;
+            // Toggle header visibility based on whether we are scrolled into the philosophy section
+            const isPhilosophyActive = (rect.top <= 0 && rect.bottom >= windowHeight);
+            const stackedSection = document.querySelector('.stacked-testimonials-section');
+            let isTestimonialsActive = false;
+            if (stackedSection) {
+                const stackRect = stackedSection.getBoundingClientRect();
+                isTestimonialsActive = (stackRect.top <= 0 && stackRect.bottom >= windowHeight);
+            }
+            
+            if (isPhilosophyActive || isTestimonialsActive) {
+                document.body.classList.add('header-hide');
+            } else {
+                document.body.classList.remove('header-hide');
+            }
+            
+            const scrolled = -rect.top;
             const scrollRange = sectionHeight - windowHeight;
             
             if (scrollRange > 0) {
