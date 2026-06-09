@@ -847,8 +847,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 let progress = scrolled / scrollRange;
                 progress = Math.max(0, Math.min(1, progress));
                 
-                // Scroll down rotates clockwise fast (moves cards upward)
-                targetScrollOffsetAngle = progress * 1080;
+                // Scroll down rotates clockwise fast (moves cards upward by exactly one 540-deg cycle)
+                targetScrollOffsetAngle = progress * 540;
             }
         });
         
