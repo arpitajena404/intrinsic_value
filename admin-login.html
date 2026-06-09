@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Login | Intrinsic Value Equity Advisors</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-navy: #0B1C3D;
+            --dark-navy: #050d1e;
+            --gold: #D4AF37;
+            --light-gold: #f4d35e;
+            --white: #ffffff;
+            --text-muted: #abb8c3;
+            --error-red: #cf2e2e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, var(--primary-navy) 0%, var(--dark-navy) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient background decorations */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0) 70%);
+            filter: blur(50px);
+            z-index: 0;
+        }
+
+        body::before {
+            top: -50px;
+            left: -50px;
+        }
+
+        body::after {
+            bottom: -50px;
+            right: -50px;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .login-card:hover {
+            border-color: rgba(212, 175, 55, 0.25);
+            box-shadow: 0 25px 50px rgba(212, 175, 55, 0.05), 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .logo-subtext {
+            color: var(--gold);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold) 0%, #b38f1e 100%);
+            border: none;
+            border-radius: 8px;
+            color: var(--primary-navy);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, var(--light-gold) 0%, var(--gold) 100%);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: rgba(207, 46, 46, 0.1);
+            border: 1px solid var(--error-red);
+            color: var(--white);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .back-to-site {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-site:hover {
+            color: var(--gold);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Shake animation for invalid login */
+        .shake {
+            animation: shakeAnimation 0.4s ease-in-out;
+        }
+
+        @keyframes shakeAnimation {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card" id="loginCard">
+            <div class="logo-section">
+                <div class="logo-text">Intrinsic Value</div>
+                <div class="logo-subtext">Equity Research</div>
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                Invalid username or password. Please try again.
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" class="form-input" required placeholder="Enter admin username" autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-input" required placeholder="Enter password" autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="login-button">Login to Portal</button>
+            </form>
+
+            <a href="index.html" class="back-to-site">← Back to website</a>
+        </div>
+    </div>
+
+    <script>
+        // Check if already logged in, redirect to dashboard if true
+        if (localStorage.getItem('adminSession') === 'true') {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loginCard = document.getElementById('loginCard');
+            
+            // Credentials requirement: admin / adminpassword
+            if (usernameInput === 'admin' && passwordInput === 'adminpassword') {
+                // Successful Login
+                localStorage.setItem('adminSession', 'true');
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                // Failed Login
+                errorMessage.style.display = 'block';
+                loginCard.classList.add('shake');
+                
+                // Clear inputs
+                document.getElementById('password').value = '';
+                
+                // Remove shake class after animation completes
+                setTimeout(() => {
+                    loginCard.classList.remove('shake');
+                }, 400);
+            }
+        }
+    </script>
+</body>
+</html>
