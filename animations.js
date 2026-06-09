@@ -85,13 +85,10 @@ style.textContent = `
 
     /* Custom Cursor Styles (Desktop Only) */
     ${!isTouchDevice ? `
-    .custom-cursor-dot {
-        display: none !important;
-    }
     .custom-cursor-circle {
-        width: 32px;
-        height: 32px;
-        border: 1.5px solid rgba(212, 175, 55, 0.45);
+        width: 24px;
+        height: 24px;
+        border: 1.5px solid rgba(212, 175, 55, 0.55);
         border-radius: 50%;
         position: fixed;
         top: 0;
@@ -100,33 +97,15 @@ style.textContent = `
         pointer-events: none;
         z-index: 9999;
         will-change: transform;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+        transition: width 0.25s cubic-bezier(0.25, 1, 0.5, 1), height 0.25s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease;
         overflow: hidden;
         opacity: 0; /* Fade in on mousemove */
     }
-    .custom-cursor-text {
-        color: #001040;
-        font-family: 'Poppins', sans-serif;
-        font-size: 8px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        opacity: 0;
-        transition: opacity 0.2s ease-in-out;
-        pointer-events: none;
-        text-transform: uppercase;
-        margin-top: 1px;
-    }
     .custom-cursor-circle.hovering {
-        width: 58px;
-        height: 58px;
-        background-color: rgba(212, 175, 55, 0.82);
+        width: 48px;
+        height: 48px;
         border-color: #D4AF37;
-    }
-    .custom-cursor-circle.hovering .custom-cursor-text {
-        opacity: 1;
+        background-color: transparent !important;
     }
     ` : ''}
 
@@ -554,46 +533,31 @@ document.head.appendChild(style);
 
 // 4. Setup Custom Cursor Tracking & Inertia (Desktops only)
 if (!isTouchDevice) {
-    const cursorDot = document.createElement('div');
-    cursorDot.className = 'custom-cursor-dot';
     const cursorCircle = document.createElement('div');
     cursorCircle.className = 'custom-cursor-circle';
-    const cursorText = document.createElement('span');
-    cursorText.className = 'custom-cursor-text';
-    cursorCircle.appendChild(cursorText);
-    document.body.appendChild(cursorDot);
     document.body.appendChild(cursorCircle);
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let dotX = mouseX;
-    let dotY = mouseY;
     let circleX = mouseX;
     let circleY = mouseY;
 
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        cursorDot.style.opacity = '1';
         cursorCircle.style.opacity = '1';
     });
 
     document.addEventListener('mouseleave', () => {
-        cursorDot.style.opacity = '0';
         cursorCircle.style.opacity = '0';
     });
 
     document.addEventListener('mouseenter', () => {
-        cursorDot.style.opacity = '1';
         cursorCircle.style.opacity = '1';
     });
 
     // Inertia follow using RequestAnimationFrame
     function updateCursor() {
-        dotX += (mouseX - dotX) * 0.35;
-        dotY += (mouseY - dotY) * 0.35;
-        cursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
-
         circleX += (mouseX - circleX) * 0.13;
         circleY += (mouseY - circleY) * 0.13;
         cursorCircle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0)`;
@@ -602,37 +566,16 @@ if (!isTouchDevice) {
     }
     requestAnimationFrame(updateCursor);
 
-    // Context-sensitive hover states using event delegation
+    // Hover state toggling on interactive elements using event delegation
     document.addEventListener('mouseover', (e) => {
         const target = e.target;
         if (!target) return;
 
-        // Pricing Cards
-        if (target.closest('.price_table_1')) {
+        const isInteractive = target.closest('a, button, select, input, textarea, .price-btn, .vc_btn3, [role="button"], .services_item1, .price_table_1, .stm_testimonials .item, .prettyphoto, .vc_item, .vc_single_image-wrapper, .post_list_main, .widget_recent_entries li, .read-more-trigger, .spiral-card');
+        
+        if (isInteractive) {
             cursorCircle.classList.add('hovering');
-            cursorText.textContent = "OPEN";
-        }
-        // Testimonials
-        else if (target.closest('.stm_testimonials .item')) {
-            cursorCircle.classList.add('hovering');
-            cursorText.textContent = "HEAR";
-        }
-        // Gallery / Images
-        else if (target.closest('.prettyphoto, .vc_item, .vc_single_image-wrapper')) {
-            cursorCircle.classList.add('hovering');
-            cursorText.textContent = "VIEW";
-        }
-        // Blog detail / links
-        else if (target.closest('.post_list_main, .widget_recent_entries li, .read-more-trigger')) {
-            cursorCircle.classList.add('hovering');
-            cursorText.textContent = "READ";
-        }
-        // Standard interactive links/buttons
-        else if (target.closest('a, button, select, input, textarea, .price-btn, .vc_btn3, [role="button"], .services_item1')) {
-            cursorCircle.classList.add('hovering');
-            cursorText.textContent = "CLICK";
-        }
-        else {
+        } else {
             cursorCircle.classList.remove('hovering');
         }
     });
@@ -738,34 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(type, 800);
     }
 
-    // 7. Dynamic Circular Scroll-Down Badge
-    const heroRow = document.querySelector('.vc_custom_1765885650684');
-    if (heroRow) {
-        const badgeContainer = document.createElement('div');
-        badgeContainer.className = 'scroll-badge';
-        badgeContainer.innerHTML = `
-            <svg viewBox="0 0 100 100" width="76" height="76">
-                <defs>
-                    <path id="badgeCirclePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" />
-                </defs>
-                <circle cx="50" cy="50" r="35" fill="none" />
-                <text fill="#D4AF37" font-size="8.5" font-family="'Poppins', sans-serif" font-weight="700" letter-spacing="1">
-                    <textPath href="#badgeCirclePath">SCROLL DOWN • SCROLL DOWN • </textPath>
-                </text>
-                <path d="M 50,38 L 50,62 M 43,55 L 50,62 L 57,55" stroke="#D4AF37" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        `;
-        heroRow.appendChild(badgeContainer);
-
-        // Spin the badge badge based on scroll
-        window.addEventListener('scroll', () => {
-            const badgeSvg = badgeContainer.querySelector('svg');
-            if (badgeSvg) {
-                const rotation = window.scrollY * 0.45;
-                badgeSvg.style.transform = `rotate(${rotation}deg)`;
-            }
-        });
-    }
+    // 7. Dynamic Circular Scroll-Down Badge (removed)
 
     // 8. Subtle Mouse Parallax on Hero Image
     if (!isTouchDevice) {
